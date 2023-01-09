@@ -2,6 +2,7 @@
 <html dir="ltr" lang="en">
     <head>
         <link rel="stylesheet" href="styles.css">
+        <script type="text/javascript" src="script.js"></script> 
     </head>
     <body>
         <div class="Wordle-Board">
@@ -15,13 +16,14 @@
                     echo 
                     '<div class="Wordle-Letter-Container">
                         <p class="Wordle-Letter">
-                            A
+                            
                         </p>
                     </div>';
                 }
                 echo '</div>';
             }
         ?>
+        <input type="button" value="click" onclick="msg()"/>
         </div>
     </body>
 
