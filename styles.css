@@ -1,3 +1,30 @@
-Wordle-Letter {
-    background-color: rgb(67, 67, 67);
+.Wordle-Board {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    row-gap: 7px;
+    margin: auto;
+    width: 50%;
+
+    text-align: center;
+}
+.Wordle-Row {
+    display: flex;
+    justify-content: center;
+    column-gap: 7px;
+}
+.Wordle-Letter-Container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    aspect-ratio: 1 / 1;
+    height: 60px;
+    min-width: height;
+    border: 2px solid rgb(67, 67, 67);
+}
+.Wordle-Letter {
+    font-weight: bold;
+    font-size: 32px;
+    font-family: Helvetica, Arial, sans-serif;
 }

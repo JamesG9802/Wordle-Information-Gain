@@ -12,7 +12,12 @@
                 echo '<div class="Wordle-Row">';
                 for($j = 0; $j < 5; $j++)   //  Letters
                 {
-                    echo '<div class="Wordle-Letter"></div>';
+                    echo 
+                    '<div class="Wordle-Letter-Container">
+                        <p class="Wordle-Letter">
+                            A
+                        </p>
+                    </div>';
                 }
                 echo '</div>';
             }
