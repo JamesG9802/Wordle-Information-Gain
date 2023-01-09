@@ -23,7 +23,6 @@
                 echo '</div>';
             }
         ?>
-        <input type="button" value="click" onclick="msg()"/>
         </div>
     </body>
 

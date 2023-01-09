@@ -4,7 +4,7 @@ var letterPos = 0;
 window.onload = function() {    //  Initializer
     letters = document.getElementsByTagName("p");
     for(var i = 0; i < letters.length; i++)
-        letters[i].innerHTML = " ";
+        letters[i].innerHTML = "";
     
 }
 
