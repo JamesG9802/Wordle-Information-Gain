@@ -1,3 +1,7 @@
+.Page-Content {
+    display: flex;
+    justify-content: space-between;
+}
 .Wordle-Board {
     display: flex;
     flex-direction: column;
