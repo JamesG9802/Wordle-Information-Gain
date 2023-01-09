@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html dir="ltr" lang="en">
-    <head></head>
+    <head>
+        <link rel="stylesheet" href="styles.css">
+    </head>
     <body>
         <div class="Wordle-Board">
         <?php 
