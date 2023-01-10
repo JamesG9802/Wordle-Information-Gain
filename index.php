@@ -7,7 +7,22 @@
     <body>
         <div class="Page-Content">
             <div class="Desc">
-                <p></p>
+            </div>
+            <div class="Wordle-Board">
+            <?php 
+                //  Wordle board
+                echo '<div class="Wordle-Row">';
+                for($j = 0; $j < 5; $j++)   //  Letters
+                {
+                    echo 
+                    '<div class="Wordle-Letter-Container">
+                        <p class="Wordle-Letter-Input">
+                            
+                        </p>
+                    </div>';
+                }
+                echo '</div>';
+            ?>
             </div>
             <div class="Wordle-Board">
             <?php 
@@ -19,12 +34,12 @@
                     {
                         echo 
                         '<div class="Wordle-Letter-Container">
-                            <p class="Wordle-Letter-Input">
+                            <p class="Wordle-Letter-Output">
                                 
                             </p>
                         </div>';
                     }
-                    echo '</div>';
+                    echo '<div class="Wordle-Letter-Information"></div></div>';
                 }
             ?>
             </div>

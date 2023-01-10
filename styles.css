@@ -14,7 +14,7 @@
 }
 .Wordle-Row {
     display: flex;
-    justify-content: center;
+    align-items: center;
     column-gap: 7px;
 }
 .Wordle-Letter-Container {
@@ -27,8 +27,13 @@
     min-width: height;
     border: 2px solid rgb(67, 67, 67);
 }
-.Wordle-Letter-Input {
+.Wordle-Letter-Input, .Wordle-Letter-Output {
     font-weight: bold;
     font-size: 32px;
     font-family: Helvetica, Arial, sans-serif;
+}
+.Wordle-Letter-Information {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    color: rgb(218, 76, 76);
 }
