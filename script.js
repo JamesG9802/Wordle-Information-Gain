@@ -59,10 +59,27 @@ function DeleteLetter()
     letters[letterPos].innerHTML = "";
 }
 
-function WriteOutputWordToRow(word)  {
+function WriteOutputWordToRow(word, outputString)  {
     for(var i = 0; i < 5; i++)
     {
-        outputLetters[outputLetterRow*5 + i].innerHTML = word.toUpperCase()[i]; 
+        var textElement = outputLetters[outputLetterRow*5 + i];
+        textElement.innerHTML = word.toUpperCase()[i]; 
+
+        var classTag = "";
+        switch(outputString[i])
+        {
+            case "0":   // gray
+                classTag = "Gray";
+                break;
+            case "1":   // yellow
+                classTag = "Yellow";
+                break;
+            case "2":
+                classTag = "Green";
+                break;
+        }
+        textElement.classList.add("Answered");
+        textElement.parentElement.classList.add(classTag);
     }
 }
 function WriteOutputInformation(value)  {
@@ -78,7 +95,9 @@ function Submit(){
         for(var i = 0; i < 5; i++)
             guessWord += letters[i].innerHTML.toLowerCase();
         if(wordList.indexOf(guessWord) >= 0)
+        {
             FindBestWord();
+        }    
         else
         {
             document.getElementById("Error-Display").innerHTML = "Please enter an actual word. Example: " + 
@@ -129,14 +148,13 @@ function FindBestWord() {
     }
     console.log(word + " " + highest + " for " + guessWord);
     
-    WriteOutputWordToRow(word);
+    //  Generate OutcomeString from word
+    var outcomeString = GenerateOutcomeString(word, guessWord);
+    WriteOutputWordToRow(word, outcomeString);
     WriteOutputInformation(highest);
     outputLetterRow++;
     if(outputLetterRow < 6 && word.toUpperCase() != guessWord.toUpperCase())
     {
-        //  Generate OutcomeString from word
-        var outcomeString = GenerateOutcomeString(word, guessWord);
-        
         //  Update restrictions
         for(var greenLetter = 0; greenLetter < outcomeString.length; greenLetter++)
         {
@@ -154,10 +172,41 @@ function FindBestWord() {
         }
         for( var grayLetter = 0; grayLetter < outcomeString.length; grayLetter++)
         {
-            if(outcomeString[grayLetter] == "0") //   gray letters cannot be in any sport
+            if(outcomeString[grayLetter] == "0") //   there are no more more gray letters in spots except in 
             {
+                var matchingYellowFlag = false;
+
                 for(var spot = 0; spot < outcomeString.length; spot++)
-                    guessRestrictions[spot][1] += word[grayLetter];
+                    if(outcomeString[spot] == "1" && outcomeString[spot] == word[grayLetter])   //  yellow letter match gray
+                    {
+                        matchingYellowFlag = true;
+                        break;
+                    }
+                if(matchingYellowFlag)  
+                //  if a gray letter matches a yellow letter, 
+                //  all that can be done is that gray cant be the letter.
+                {
+                    guessRestrictions[grayLetter][1] += word[grayLetter];
+                    break;
+                }
+                for(var spot = 0; spot < outcomeString.length; spot++)  // no yellow letter match
+                {
+                    if(outcomeString[spot] == "2" && outcomeString[spot] == word[grayLetter])   // green letter match
+                        continue;
+                    guessRestrictions[grayLetter][1] += word[grayLetter];
+                }
+                    // proof by cases:
+                    // gray letter is unique in word
+                    //      add letter to all spot's restrictions
+                    // gray letter matches green letter
+                    //      if letter is green, do nothing
+                    // gray letter matches gray letter
+                    //      add letter to all spot's restrictions
+                    // gray letter matches yellow letter
+                    //      add letter to restriction only in gray letter spot
+                    // gray letter matches green + yellow
+                    //      if letter is green, do nothing
+                    //
             }
         }
         var pattern = "";

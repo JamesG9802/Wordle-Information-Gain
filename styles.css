@@ -37,3 +37,16 @@
     font-size: 16px;
     color: rgb(218, 76, 76);
 }
+
+.Answered {
+    color: white;
+}
+.Gray {
+    background-color: rgb(120,124,126);
+}
+.Yellow {
+    background-color: rgb(201, 180, 88);
+}
+.Green {
+    background-color: rgb(106, 170, 100);
+}
