@@ -27,7 +27,7 @@
     min-width: height;
     border: 2px solid rgb(67, 67, 67);
 }
-.Wordle-Letter {
+.Wordle-Letter-Input {
     font-weight: bold;
     font-size: 32px;
     font-family: Helvetica, Arial, sans-serif;

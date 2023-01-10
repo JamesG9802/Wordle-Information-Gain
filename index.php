@@ -5,24 +5,29 @@
         <script type="text/javascript" src="script.js"></script> 
     </head>
     <body>
-        <div class="Wordle-Board">
-        <?php 
-            //  Wordle board
-            for($i = 0; $i < 6; $i++)   //  Rows
-            {
-                echo '<div class="Wordle-Row">';
-                for($j = 0; $j < 5; $j++)   //  Letters
+        <div class="Page-Content">
+            <div class="Desc">
+                <p></p>
+            </div>
+            <div class="Wordle-Board">
+            <?php 
+                //  Wordle board
+                for($i = 0; $i < 6; $i++)   //  Rows
                 {
-                    echo 
-                    '<div class="Wordle-Letter-Container">
-                        <p class="Wordle-Letter">
-                            
-                        </p>
-                    </div>';
+                    echo '<div class="Wordle-Row">';
+                    for($j = 0; $j < 5; $j++)   //  Letters
+                    {
+                        echo 
+                        '<div class="Wordle-Letter-Container">
+                            <p class="Wordle-Letter-Input">
+                                
+                            </p>
+                        </div>';
+                    }
+                    echo '</div>';
                 }
-                echo '</div>';
-            }
-        ?>
+            ?>
+            </div>
         </div>
     </body>
 
