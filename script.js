@@ -11,6 +11,10 @@ var wordList = [];
 //  Word to guess
 var guessWord;
 
+var guessRestrictions = {0:["[a-z]", ""], 1:["[a-z]", ""], 2:["[a-z]", ""], 3:["[a-z]", ""], 4:["[a-z]",""]};
+
+var found = false;
+
 window.onload = function() {    //  Initializer
     //  Load Letter Display
     letters = document.getElementsByClassName("Wordle-Letter-Input");
@@ -25,9 +29,8 @@ window.onload = function() {    //  Initializer
     xmlhttp.open("GET", "./Data/english_five.txt", false);
     xmlhttp.send();
     if (xmlhttp.status==200) {
-        result = xmlhttp.responseText;
+        result = xmlhttp.responseText.toLowerCase();
         wordList = result.split(/\s+/);
-        wordList = wordList.slice(0,1000);
     }
     else    {
         document.getElementsByTagName("body")[0].innerHTML = "Couldn't load English database.";
@@ -71,12 +74,22 @@ function WriteOutputInformation(value)  {
 function Submit(){
     if(letterPos == 5)
     {    
+        guessWord = "";
         for(var i = 0; i < 5; i++)
-            guessWord += letters[i].innerHTML;
-        FindBestWord();
+            guessWord += letters[i].innerHTML.toLowerCase();
+        if(wordList.indexOf(guessWord) >= 0)
+            FindBestWord();
+        else
+        {
+            document.getElementById("Error-Display").innerHTML = "Please enter an actual word. Example: " + 
+            wordList[Math.floor(Math.random() * wordList.length)];
+        }
     }
 }
 function FindBestWord() {
+    if(found)
+        return;
+    console.log(wordList.length);
     /* Naive Approach 
         Go through every possible word and calculate the information gain of each possible word
         Then select the word that would give you the most information.
@@ -86,8 +99,6 @@ function FindBestWord() {
             generate information gain of outcome
             store expected information gain
     */
-   
-    console.log("check");
     var wordScore = {};
     for(var i = 0; i < wordList.length;i++){
         var expectedValue = 0.0;
@@ -116,77 +127,73 @@ function FindBestWord() {
             word = key;
         }
     }
-    console.log(word + " " + highest);
+    console.log(word + " " + highest + " for " + guessWord);
     
     WriteOutputWordToRow(word);
     WriteOutputInformation(highest);
     outputLetterRow++;
-    if(outputLetterRow < 6 && word != guessWord)
+    if(outputLetterRow < 6 && word.toUpperCase() != guessWord.toUpperCase())
     {
         //  Generate OutcomeString from word
         var outcomeString = GenerateOutcomeString(word, guessWord);
-        //  Green letters
-        var greenLetters = {};
-        for(var letter = 0; letter < outcomeString.length; letter++)
-            if(outcomeString[letter] == "2")
-            {
-                if(!(outcomeString[letter] in greenLetters))
-                    greenLetters[outcomeString[letter]] = [letter];
-                else
-                    greenLetters[outcomeString[letter]].push(letter);
-            }
-        //  Yellow letters
-        var yellowLetters = {};
-        for(var letter = 0; letter < outcomeString.length; letter++)
+        
+        //  Update restrictions
+        for(var greenLetter = 0; greenLetter < outcomeString.length; greenLetter++)
         {
-            if(outcomeString[letter] == "1")
+            if(outcomeString[greenLetter] == "2") //    Only that letter can exist in that spot
             {
-                if(!(outcomeString[letter] in yellowLetters))
-                    yellowLetters[outcomeString[letter]] = [letter];
-                else
-                    yellowLetters[outcomeString[letter]].push(letter);
+                guessRestrictions[greenLetter][0] = word[greenLetter];
             }
         }
+        for(var yellowLetter = 0; yellowLetter < outcomeString.length; yellowLetter++)
+        {
+            if(outcomeString[yellowLetter] == "1") //   Letter cannot exist in that spot
+            {
+                guessRestrictions[yellowLetter][1] += word[yellowLetter];
+            }
+        }
+        for( var grayLetter = 0; grayLetter < outcomeString.length; grayLetter++)
+        {
+            if(outcomeString[grayLetter] == "0") //   gray letters cannot be in any sport
+            {
+                for(var spot = 0; spot < outcomeString.length; spot++)
+                    guessRestrictions[spot][1] += word[grayLetter];
+            }
+        }
+        var pattern = "";
+        for(const [key, value] of Object.entries(guessRestrictions))
+        {
+            if(value[1].length == 0)
+                pattern += "(" + value[0] +")";
+            else
+                pattern += "(?=" + value[0] + ")([^" + value[1] + "])";  
+        }
+        console.log(outcomeString + " " + pattern);
+        pattern = new RegExp(pattern);
         var newWordList = [];
         //  word list is shrunk to possible matches
         for(var i = 0; i < wordList.length; i++)
         {
-            //  Green Letter compliance
-            for(const [key, value] of Object.entries(greenLetters))
-            {
-                for(var j = 0; j < value.length;j++)
-                    if(key != wordList[i][value[j]])
-                        continue;
-            }
-            //  Yellow Letter compliance
-            for(const [key, value] of Object.entries(yellowLetters))
-            {
-                for(var k = 0; k < value.length;k++)
-                {
-                    //  Yellow letter must not be in the same spot AND
-                    //  if it is in green letter, can't be there either
-                    var found = false;
-                    for(var j = 0; j < wordList[i].length; j++)
-                    {
-                        if(key == wordList[i][value[k]])   // in the same position so not helpful
-                            break;
-                        else if(key in greenLetters && j in greenLetters[key])  // same as green letter
-                            continue;
-                        else if(key == wordList[i][j])
-                        {    
-                            found = true;
-                            break;
-                        }
-                    }
-                    if(found)
-                        newWordList.push(wordList[i]);
-                }
-            }
+            if(pattern.test(wordList[i]))
+                newWordList.push(wordList[i]);
         }
         wordList = newWordList;
+        wordList = wordList.filter(function(value, index, arr){ 
+            return value != word;   //  previous guess made
+        });
+        console.log(wordList.length);
     }
+    else if(word.toUpperCase() == guessWord.toUpperCase())
+    {
+        found = true;
+        console.log("found");
+    }
+    else
+        console.log("couldn't find word");
 }
 function GenerateOutcomeString(originalWord, actualWord)  {
+    originalWord = originalWord.toUpperCase();
+    actualWord = actualWord.toUpperCase();
     /*  A word's letters can become green, yellow, or gray 
         0 = Gray, 1 = Yellow, 2 = Green
         There are 3^5 different outcomes to examine

@@ -9,6 +9,7 @@
             <div class="Desc">
             </div>
             <div class="Wordle-Board">
+            <p id="Error-Display"></p>
             <?php 
                 //  Wordle board
                 echo '<div class="Wordle-Row">';
