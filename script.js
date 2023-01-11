@@ -63,6 +63,7 @@ window.onload = function() {    //  Initializer
 
 function WriteLetter(letter)    //  Safe way to update letters in HTML
 {
+    console.log(letter);
     if(letterPos >= 5)
         console.log("Character overflow");
     if(letterPos < 5)
@@ -114,15 +115,11 @@ function WriteOutputInformation(value)  {
 }
 function MobileWriteWord()
 {
-    var text = document.getElementById("Mobile-Input").innerHTML;
+    var text = document.getElementById("Mobile-Input").value.toUpperCase();
     for(var i = 0; i < 5; i++)
-    {
         DeleteLetter();
-    }
     for(var i = 0; i < text.length; i++)
-    {
         WriteLetter(text[i]);
-    }
 }
 function Submit(){
     if(letterPos == 5)
