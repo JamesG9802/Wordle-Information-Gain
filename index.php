@@ -7,7 +7,7 @@
     <body>
         <div class="Page-Content">
             <div class="Desc">
-                <p>Enter a word using the keyboard. Mobile support WIP. Press Enter to run the solver. Allow for a few minutes for the initial guesses.</p>
+                <p>Enter a word using the keyboard. Press Enter or the button to run the solver. Allow for a few minutes for the initial guesses.</p>
             </div>
             <div style="align-items: center;"class="Wordle-Board">
                 <p id="Error-Display"></p>
