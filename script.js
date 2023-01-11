@@ -15,6 +15,8 @@ var guessRestrictions = {0:["[a-z]", ""], 1:["[a-z]", ""], 2:["[a-z]", ""], 3:["
 
 var found = false;
 
+var isSolving = false;
+
 window.onload = function() {    //  Initializer
     //  Load Letter Display
     letters = document.getElementsByClassName("Wordle-Letter-Input");
@@ -88,6 +90,18 @@ function WriteOutputInformation(value)  {
     var list = document.getElementsByClassName("Wordle-Letter-Information");
     list[outputLetterRow].innerHTML = with2Decimals;
 }
+function MobileWriteWord()
+{
+    var text = document.getElementById("Mobile-Input").innerHTML;
+    for(var i = 0; i < 5; i++)
+    {
+        DeleteLetter();
+    }
+    for(var i = 0; i < text.length; i++)
+    {
+        WriteLetter(text[i]);
+    }
+}
 function Submit(){
     if(letterPos == 5)
     {    
@@ -96,6 +110,7 @@ function Submit(){
             guessWord += letters[i].innerHTML.toLowerCase();
         if(wordList.indexOf(guessWord) >= 0)
         {
+            isSolving = true;
             FindBestWord();
         }    
         else
@@ -136,7 +151,7 @@ function FindBestWord() {
         }
         wordScore[wordList[i]] = expectedValue;
     }
-    var highest = 0;
+    var highest = -1;
     var word = "";
     for(const [key, value] of Object.entries(wordScore))
     {
@@ -193,9 +208,9 @@ function FindBestWord() {
                 {
                     if(outcomeString[spot] == "2" && outcomeString[spot] == word[grayLetter])   // green letter match
                         continue;
-                    guessRestrictions[grayLetter][1] += word[grayLetter];
+                    guessRestrictions[spot][1] += word[grayLetter];
                 }
-                    // proof by cases:
+                    // by cases:
                     // gray letter is unique in word
                     //      add letter to all spot's restrictions
                     // gray letter matches green letter
@@ -267,7 +282,9 @@ function GenerateOutcomeString(originalWord, actualWord)  {
     //  Yellow Pass
     for(var i = 0; i < actualWord.length; i++)
     {
-        //  Checking if the word is in the word but in the wrong spot\
+        if(outcomeString[i] == "2") // green > yellow so continue
+            continue;
+        //  Checking if the word is in the word but in the wrong spot
         for(var j = 0; j < actualWord.length; j++)
         {
             if(j == i)
@@ -296,9 +313,9 @@ document.addEventListener('keydown', (event) => {
     //  https://stackoverflow.com/questions/2257070/detect-numbers-or-letters-with-jquery-javascript
     const input = event.key.toUpperCase();
     console.log(input);
-    if(/^[a-zA-Z ]$/.test(input))
+    if(!isSolving && /^[a-zA-Z ]$/.test(input))
         WriteLetter(input);
-    else if(input == "BACKSPACE")
+    else if(!isSolving && input == "BACKSPACE")
         DeleteLetter();
     else if(input == "ENTER")
         Submit();

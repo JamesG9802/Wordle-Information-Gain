@@ -9,22 +9,25 @@
             <div class="Desc">
                 <p>Enter a word using the keyboard. Mobile support WIP. Press Enter to run the solver. Allow for a few minutes for the initial guesses.</p>
             </div>
-            <div class="Wordle-Board">
-            <p id="Error-Display"></p>
-            <?php 
-                //  Wordle board
-                echo '<div class="Wordle-Row">';
-                for($j = 0; $j < 5; $j++)   //  Letters
-                {
-                    echo 
-                    '<div class="Wordle-Letter-Container">
-                        <p class="Wordle-Letter-Input">
-                            
-                        </p>
-                    </div>';
-                }
-                echo '</div>';
-            ?>
+            <div style="align-items: center;"class="Wordle-Board">
+                <p id="Error-Display"></p>
+                <label for="Mobile-Input">Mobile Input</label>
+                <input id="Mobile-Input" class="Mobile-Input" name="Mobile-Input" type="text"/>
+                <?php 
+                    //  Wordle board
+                    echo '<div class="Wordle-Row">';
+                    for($j = 0; $j < 5; $j++)   //  Letters
+                    {
+                        echo 
+                        '<div class="Wordle-Letter-Container">
+                            <p class="Wordle-Letter-Input">
+                                
+                            </p>
+                        </div>';
+                    }
+                    echo '</div>';
+                ?>
+                <button class="Button" onclick="Submit()">Run Solver</button>
             </div>
             <div class="Wordle-Board">
             <?php 
