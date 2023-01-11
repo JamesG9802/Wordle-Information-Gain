@@ -37,6 +37,28 @@ window.onload = function() {    //  Initializer
     else    {
         document.getElementsByTagName("body")[0].innerHTML = "Couldn't load English database.";
     }
+    //  Listeners
+    document.addEventListener('keydown', (event) => {
+        if(event.repeat)
+            return;
+        //  https://stackoverflow.com/questions/2257070/detect-numbers-or-letters-with-jquery-javascript
+        const input = event.key.toUpperCase();
+        console.log(input);
+        if(!isSolving && /^[a-zA-Z ]$/.test(input))
+            WriteLetter(input);
+        else if(!isSolving && input == "BACKSPACE")
+            DeleteLetter();
+        else if(input == "ENTER")
+            Submit();
+    });
+    document.getElementById("Mobile-Input").addEventListener("keyup", (event) => {
+        const input = event.key.toUpperCase();
+        if(input == "ENTER")
+        {
+            MobileWriteWord();
+            Submit();
+        }
+    });
 }
 
 function WriteLetter(letter)    //  Safe way to update letters in HTML
@@ -110,6 +132,7 @@ function Submit(){
             guessWord += letters[i].innerHTML.toLowerCase();
         if(wordList.indexOf(guessWord) >= 0)
         {
+            document.getElementById("Mobile-Input").disabled = true;
             isSolving = true;
             FindBestWord();
         }    
@@ -206,7 +229,7 @@ function FindBestWord() {
                 }
                 for(var spot = 0; spot < outcomeString.length; spot++)  // no yellow letter match
                 {
-                    if(outcomeString[spot] == "2" && outcomeString[spot] == word[grayLetter])   // green letter match
+                    if(outcomeString[spot] == "2" && word[spot] == word[grayLetter])   // green letter match
                         continue;
                     guessRestrictions[spot][1] += word[grayLetter];
                 }
@@ -307,17 +330,4 @@ function GenerateOutcomeString(originalWord, actualWord)  {
     }
     return outcomeString;
 }
-document.addEventListener('keydown', (event) => {
-    if(event.repeat)
-        return;
-    //  https://stackoverflow.com/questions/2257070/detect-numbers-or-letters-with-jquery-javascript
-    const input = event.key.toUpperCase();
-    console.log(input);
-    if(!isSolving && /^[a-zA-Z ]$/.test(input))
-        WriteLetter(input);
-    else if(!isSolving && input == "BACKSPACE")
-        DeleteLetter();
-    else if(input == "ENTER")
-        Submit();
-});
 

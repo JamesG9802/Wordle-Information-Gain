@@ -12,7 +12,12 @@
             <div style="align-items: center;"class="Wordle-Board">
                 <p id="Error-Display"></p>
                 <label for="Mobile-Input">Mobile Input</label>
-                <input id="Mobile-Input" class="Mobile-Input" name="Mobile-Input" type="text"/>
+                <input id="Mobile-Input" class="Mobile-Input" 
+                size="5"
+                minlength="5"
+                maxlength="5"
+                pattern="[a-zA-Z]"
+                name="Mobile-Input" type="text"/>
                 <?php 
                     //  Wordle board
                     echo '<div class="Wordle-Row">';
