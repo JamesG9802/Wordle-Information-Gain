@@ -18,6 +18,7 @@
                 maxlength="5"
                 pattern="[a-zA-Z]"
                 name="Mobile-Input" type="text"/>
+                <button class="Button" onclick="MobileWriteWord()">Set Mobile input</button>
                 <?php 
                     //  Wordle board
                     echo '<div class="Wordle-Row">';
