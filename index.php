@@ -33,7 +33,10 @@
                     }
                     echo '</div>';
                 ?>
-                <button class="Button" onclick="Submit()">Run Solver</button>
+                <button id="Solver" class="Button" onclick="Submit()">Run Solver</button>
+                <div id="ProgressBar">
+                    <div id ="ProgressBar_Cover"></div>
+                </div>
             </div>
             <div class="Wordle-Board">
             <?php 

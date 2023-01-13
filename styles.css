@@ -77,9 +77,24 @@
 	touch-action: manipulation; 
 
 }
-.button:hover {
+.Button:hover {
     background-color: #5dc2f5;
   }
-  .button:active {
+.Button:active {
     background-color: #5591ff;
-  }
+}
+#ProgressBar {
+    display: initial;
+    width: 0%;
+    background-color: rgb(120,124,126);
+}
+#ProgressBar_Cover {
+    width: 0%;
+    height: 30px;
+    background-color: rgb(201, 180, 88);
+}
+#ProgressBar_Finished {
+    width: 100%;
+    height: 30px;
+    background-color: rgb(106, 170, 100);
+}

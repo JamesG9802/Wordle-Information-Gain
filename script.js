@@ -1,3 +1,5 @@
+const MAX_WORKER_COUNT = navigator.hardwareConcurrency;
+var threadsFinished = 0;
 //  Tracks position of where letters should
 var letters;
 var letterPos = 0;
@@ -8,15 +10,17 @@ var outputLetterRow = 0;
 //  List of all valid words
 var wordList = [];
 
+//  Word score calculation
+var wordScore = {};
+
 //  Word to guess
 var guessWord;
-
 var guessRestrictions = {0:["[a-z]", ""], 1:["[a-z]", ""], 2:["[a-z]", ""], 3:["[a-z]", ""], 4:["[a-z]",""]};
 
 var found = false;
-
 var isSolving = false;
 
+var numWords;
 window.onload = function() {    //  Initializer
     //  Load Letter Display
     letters = document.getElementsByClassName("Wordle-Letter-Input");
@@ -140,6 +144,24 @@ function Submit(){
         }
     }
 }
+//  Web Worker Not Supported Version
+function CalculateWordScore(i)   {
+    var expectedValue = 0.0;
+    var outcomes = {};
+    for(var j = 0; j < wordList.length; j++){
+        var outcome = GenerateOutcomeString(wordList[i], wordList[j]);
+        if(!(outcome in outcomes))
+            outcomes[outcome] = 1.0;
+        else
+            outcomes[outcome]++;
+    }
+    for(const [key, value] of Object.entries(outcomes))
+    {
+        expectedValue += value / wordList.length   //  probability
+        * -Math.log(value / wordList.length) / Math.log(2);  //  information gain -log2(probability)
+    }
+    wordScore[wordList[i]] = expectedValue;
+}
 function FindBestWord() {
     if(found)
         return;
@@ -153,24 +175,55 @@ function FindBestWord() {
             generate information gain of outcome
             store expected information gain
     */
-    var wordScore = {};
-    for(var i = 0; i < wordList.length;i++){
-        var expectedValue = 0.0;
-        var outcomes = {};
-        for(var j = 0; j < wordList.length; j++){
-            var outcome = GenerateOutcomeString(wordList[i], wordList[j]);
-            if(!(outcome in outcomes))
-                outcomes[outcome] = 1.0;
-            else
-                outcomes[outcome]++;
-        }
-        for(const [key, value] of Object.entries(outcomes))
+    if(window.Worker)
+    {
+        wordScore = {};
+        threadsFinished = 0;
+        numWords = 0;
+        document.getElementById("ProgressBar").setAttribute("style", "width:100%;");
+        if(document.getElementById("ProgressBar_Finished") != null)
         {
-            expectedValue += value / wordList.length   //  probability
-            * -Math.log(value / wordList.length) / Math.log(2);  //  information gain -log2(probability)
+            document.getElementById("ProgressBar_Finished").setAttribute("style", "width:0%;");
+            document.getElementById("ProgressBar_Finished").setAttribute("id", "ProgressBar_Cover");
         }
-        wordScore[wordList[i]] = expectedValue;
+        for(var i = 0; i < MAX_WORKER_COUNT; i++)
+        {
+            const workerThread = new Worker("calculate.js");
+            workerThread.postMessage([wordList, i, MAX_WORKER_COUNT]);
+
+            workerThread.onmessage = function(e) {
+                if(e.data[0] >= 0)
+                {    
+                    wordScore[wordList[e.data[0]]] = e.data[1];
+                    numWords++;
+                    document.getElementById("ProgressBar_Cover").setAttribute("style", 
+                        "width:"+ (100*numWords/wordList.length) +"%;");
+                }
+                else 
+                    threadsFinished++;
+                if(threadsFinished == MAX_WORKER_COUNT)
+                {
+                    document.getElementById("ProgressBar_Cover").setAttribute("style", "width:100%");
+                    document.getElementById("ProgressBar_Cover").setAttribute("id", "ProgressBar_Finished");
+                    ChooseAnswer();
+                }
+            }
+        }  
     }
+    else    //  Web Workers not supported
+    {
+        alert("Warning: Web Workers are not supported on this browser. The application may take a few minutes to finish running as a result.");
+        var i = 0;
+        while(i < wordList.length)
+        {
+            setTimeout(CalculateWordScore(i),0);
+            i++;
+        }
+        ChooseAnswer();
+    }
+}
+function ChooseAnswer() {
+    document.getElementById("Solver").innerText = "Continue Solving";
     var highest = -1;
     var word = "";
     for(const [key, value] of Object.entries(wordScore))
