@@ -9,7 +9,8 @@ var outputLetterRow = 0;
 
 //  List of all valid words
 var wordList = [];
-
+var frequencyList = {};
+var totalWordCount = 0;
 //  Word score calculation
 var wordScore = {};
 
@@ -30,6 +31,7 @@ window.onload = function() {    //  Initializer
 
     //  https://stackoverflow.com/questions/36921947/read-a-server-side-file-using-javascript
 
+    //  Loading Word List
     var result = null;
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("GET", "./Data/english_five.txt", false);
@@ -40,7 +42,31 @@ window.onload = function() {    //  Initializer
     }
     else    {
         document.getElementsByTagName("body")[0].innerHTML = "Couldn't load English database.";
+        return;
     }
+    //  Loading Frequency Word List
+    xmlhttp.open("GET", "./Data/english_five_frequency.txt", false);
+    xmlhttp.send();
+
+    if(xmlhttp.status==200) {
+        result = xmlhttp.responseText.toLowerCase().split(/\n/);
+
+        //  In case a word is only in either english_five or english_five_frequency
+        //  each word has +1 to count to prevent frequency of 0%;
+        for(var i = 0; i < wordList.length; i++)
+            frequencyList[wordList[i]] = 1;
+        for(var i = 0; i < result.length; i++)
+        {
+            var line = result[i].split(/\s/);
+            var word = line[0];
+            var count = line[1];
+            if(!(word in frequencyList))    //  word not in list
+                frequencyList[word] = 1 + count;
+            else
+                frequencyList[word] = frequencyList[word] + count;
+        }
+    }
+
     //  Listeners
     document.addEventListener('keydown', (event) => {
         if(event.repeat)
