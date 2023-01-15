@@ -51,8 +51,8 @@ window.onload = function() {    //  Initializer
     if(xmlhttp.status==200) {
         result = xmlhttp.responseText.toLowerCase().split(/\n/);
 
-        //  In case a word is only in either english_five or english_five_frequency
-        //  each word has +1 to count to prevent frequency of 0%;
+        //  For consistency, only words from the original 5 letter database have their frequencies checked
+        //  also in case a word does not have a frequency, it has a frequency of 1.
         for(var i = 0; i < wordList.length; i++)
             frequencyList[wordList[i]] = 1;
         for(var i = 0; i < result.length; i++)
@@ -61,10 +61,11 @@ window.onload = function() {    //  Initializer
             var word = line[0];
             var count = line[1];
             if(!(word in frequencyList))    //  word not in list
-                frequencyList[word] = 1 + count;
-            else
-                frequencyList[word] = frequencyList[word] + count;
+                continue;
+            frequencyList[word] = count + 1;
         }
+        for(const [key, value] of Object.entries(frequencyList))
+            totalWordCount += value;
     }
 
     //  Listeners
