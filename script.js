@@ -37,7 +37,7 @@ window.onload = function() {    //  Initializer
     xmlhttp.open("GET", "./Data/english_five.txt", false);
     xmlhttp.send();
     if (xmlhttp.status==200) {
-        result = xmlhttp.responseText.toLowerCase();
+        result = xmlhttp.responseText.toLowerCase().trim();
         wordList = result.split(/\s+/);
     }
     else    {
@@ -49,7 +49,7 @@ window.onload = function() {    //  Initializer
     xmlhttp.send();
 
     if(xmlhttp.status==200) {
-        result = xmlhttp.responseText.toLowerCase().split(/\n/);
+        result = xmlhttp.responseText.toLowerCase().trim().split(/\n/);
 
         //  For consistency, only words from the original 5 letter database have their frequencies checked
         //  also in case a word does not have a frequency, it has a frequency of 1.
@@ -62,12 +62,13 @@ window.onload = function() {    //  Initializer
             var count = line[1];
             if(!(word in frequencyList))    //  word not in list
                 continue;
-            frequencyList[word] = count + 1;
+            frequencyList[word] = parseFloat(count) + 1;
         }
         for(const [key, value] of Object.entries(frequencyList))
+        {
             totalWordCount += value;
+        }
     }
-
     //  Listeners
     document.addEventListener('keydown', (event) => {
         if(event.repeat)
