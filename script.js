@@ -20,7 +20,7 @@ var guessRestrictions = {0:["[a-z]", ""], 1:["[a-z]", ""], 2:["[a-z]", ""], 3:["
 
 var found = false;
 var isSolving = false;
-
+var isRunning = false;
 var numWords;
 window.onload = function() {    //  Initializer
     //  Load Letter Display
@@ -80,7 +80,7 @@ window.onload = function() {    //  Initializer
             WriteLetter(input);
         else if(!isSolving && input == "BACKSPACE")
             DeleteLetter();
-        else if(input == "ENTER")
+        else if(!isRunning && input == "ENTER")
             Submit();
     });
     document.getElementById("Mobile-Input").addEventListener("keyup", (event) => {
@@ -203,6 +203,7 @@ function FindBestWord() {
             generate information gain of outcome
             store expected information gain
     */
+    isRunning = true;
     if(window.Worker)
     {
         wordScore = {};
@@ -251,6 +252,7 @@ function FindBestWord() {
     }
 }
 function ChooseAnswer() {
+    isRunning = false;
     document.getElementById("Solver").innerText = "Continue Solving";
     var highest = -1;
     var word = "";
