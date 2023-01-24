@@ -70,7 +70,7 @@ window.onload = function() {    //  Initializer
         var numCommonWords = 3000;
         var intervalLength = 11;
         var midPoint = intervalLength * (-.5 + numCommonWords / wordList.length);
-        var minPoint = midPoint - intervalLength/2;
+        var maxPoint = midPoint + intervalLength/2;
         //  https://stackoverflow.com/questions/25500316/sort-a-dictionary-by-value-in-javascript
         var items = Object.keys(frequencyList).map(function(key) {
             return [key, frequencyList[key]];
@@ -79,11 +79,11 @@ window.onload = function() {    //  Initializer
         items.sort(function(first, second) {
             return second[1] - first[1];
         });
-        var counter = minPoint;
+        var counter = maxPoint;
         for(var i = 0; i < items.length; i++)
         {
-            frequencyList[items[i][0]] = 1/(1+Math.pow(Math.E, counter));
-            counter += intervalLength / items.length;
+            frequencyList[items[i][0]] = 1/(1+Math.pow(Math.E, -counter));
+            counter -= intervalLength / items.length;
         }
     }
     
