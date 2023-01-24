@@ -3,23 +3,23 @@ onmessage = function(e) {
     var wordList = e.data[0];
     var threadIndex = e.data[1];
     var threadNumber = e.data[2];
+    var frequencyList = e.data[3];
     for(var i = threadIndex; i < wordList.length;i+= threadNumber){
         var expectedValue = 0.0;
         var outcomes = {};
         for(var j = 0; j < wordList.length; j++){
             var outcome = GenerateOutcomeString(wordList[i], wordList[j]);
             if(!(outcome in outcomes))
-                outcomes[outcome] = 1.0;
+            //  Probability now considers frequency as well
+                outcomes[outcome] = 1.0/wordList.length * frequencyList[wordList[j]];
             else
-                outcomes[outcome]++;
+                outcomes[outcome]+= 1.0/wordList.length * frequencyList[wordList[j]];
         }
         for(const [key, value] of Object.entries(outcomes))
         {
-            expectedValue += value / wordList.length   //  probability
-            * -Math.log(value / wordList.length) / Math.log(2);  //  information gain -log2(probability)
+            expectedValue += value //  probability
+            * -Math.log(value) / Math.log(2);  //  information gain -log2(probability)
         }
-        if(i % 1000 == 0)
-            console.log(threadIndex + " " + i);
         postMessage([i, expectedValue]);
     }
     postMessage([-1, null]);

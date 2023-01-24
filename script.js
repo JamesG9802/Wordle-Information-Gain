@@ -9,7 +9,7 @@ var outputLetterRow = 0;
 
 //  List of all valid words
 var wordList = [];
-
+var frequencyList = {};
 //  Word score calculation
 var wordScore = {};
 
@@ -30,17 +30,63 @@ window.onload = function() {    //  Initializer
 
     //  https://stackoverflow.com/questions/36921947/read-a-server-side-file-using-javascript
 
+    //  Loading Word List
     var result = null;
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.open("GET", "./Data/english_five.txt", false);
     xmlhttp.send();
     if (xmlhttp.status==200) {
-        result = xmlhttp.responseText.toLowerCase();
+        result = xmlhttp.responseText.toLowerCase().trim();
         wordList = result.split(/\s+/);
     }
     else    {
         document.getElementsByTagName("body")[0].innerHTML = "Couldn't load English database.";
+        return;
     }
+    //  Loading Frequency Word List
+    xmlhttp.open("GET", "./Data/english_five_frequency.txt", false);
+    xmlhttp.send();
+
+    if(xmlhttp.status==200) {
+        result = xmlhttp.responseText.toLowerCase().trim().split(/\n/);
+        //  For consistency, only words from the original 5 letter database have their frequencies checked
+        //  also in case a word does not have a frequency, default probability is 1%.
+        for(var i = 0; i < wordList.length; i++)
+            frequencyList[wordList[i]] = .01;  
+        for(var i = 0; i < result.length; i++)
+        {
+            var line = result[i].split(/\s/);
+            var word = line[0];
+            var count = line[1];
+            if(!(word in frequencyList))    //  word not in list
+                continue;
+            frequencyList[word] = parseFloat(count) + 1;
+        }
+        //  Changing frequencies to appropriate probability value
+        //  Based on Grant Sanderson (3Blue1Brown)'s implementation
+        //  https://github.com/3b1b/videos/blob/master/_2022/wordle/simulations.py
+        //  see line 61 as of January 24 2023
+
+        var numCommonWords = 3000;
+        var intervalLength = 11;
+        var midPoint = intervalLength * (-.5 + numCommonWords / wordList.length);
+        var minPoint = midPoint - intervalLength/2;
+        //  https://stackoverflow.com/questions/25500316/sort-a-dictionary-by-value-in-javascript
+        var items = Object.keys(frequencyList).map(function(key) {
+            return [key, frequencyList[key]];
+        });
+        // Sort the array based on the second element
+        items.sort(function(first, second) {
+            return second[1] - first[1];
+        });
+        var counter = minPoint;
+        for(var i = 0; i < items.length; i++)
+        {
+            frequencyList[items[i][0]] = 1/(1+Math.pow(Math.E, counter));
+            counter += intervalLength / items.length;
+        }
+    }
+    
     //  Listeners
     document.addEventListener('keydown', (event) => {
         if(event.repeat)
@@ -162,6 +208,25 @@ function CalculateWordScore(i)   {
     }
     wordScore[wordList[i]] = expectedValue;
 }
+//  Web Worker Not Supported Version
+function CalculateWordScoreWithFrequency(i)   {
+    var expectedValue = 0.0;
+    var outcomes = {};
+    for(var j = 0; j < wordList.length; j++){
+        var outcome = GenerateOutcomeString(wordList[i], wordList[j]);
+        if(!(outcome in outcomes))
+        //  Probability now considers frequency as well
+            outcomes[outcome] = 1.0/wordList.length * frequencyList[wordList[j]];
+        else
+            outcomes[outcome]+= 1.0/wordList.length * frequencyList[wordList[j]];
+    }
+    for(const [key, value] of Object.entries(outcomes))
+    {
+        expectedValue += value //  probability
+        * -Math.log(value) / Math.log(2);  //  information gain -log2(probability)
+    }
+    wordScore[wordList[i]] = expectedValue;
+}
 function FindBestWord() {
     if(found)
         return;
@@ -190,7 +255,7 @@ function FindBestWord() {
         for(var i = 0; i < MAX_WORKER_COUNT; i++)
         {
             const workerThread = new Worker("calculate.js");
-            workerThread.postMessage([wordList, i, MAX_WORKER_COUNT]);
+            workerThread.postMessage([wordList, i, MAX_WORKER_COUNT, frequencyList]);
 
             workerThread.onmessage = function(e) {
                 if(e.data[0] >= 0)
