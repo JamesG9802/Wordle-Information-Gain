@@ -8,7 +8,7 @@
         <div class="Page-Content">
             <div class="Desc">
                 <p>This is an algorithmic solver for the puzzle game Wordle. 
-                    Enter a word that the computer will try to solver using the keyboard. 
+                    Enter a word that the computer will try to solve using the keyboard. 
                     Press Enter or the button to run the solver.
                 </p>
             </div>

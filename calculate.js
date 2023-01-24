@@ -18,8 +18,6 @@ onmessage = function(e) {
             expectedValue += value / wordList.length   //  probability
             * -Math.log(value / wordList.length) / Math.log(2);  //  information gain -log2(probability)
         }
-        if(i % 1000 == 0)
-            console.log(threadIndex + " " + i);
         postMessage([i, expectedValue]);
     }
     postMessage([-1, null]);

@@ -65,9 +65,9 @@ window.onload = function() {    //  Initializer
             frequencyList[word] = parseFloat(count) + 1;
         }
         for(const [key, value] of Object.entries(frequencyList))
-        {
             totalWordCount += value;
-        }
+        //  Changing frequencies to appropriate probability value
+        
     }
     //  Listeners
     document.addEventListener('keydown', (event) => {
