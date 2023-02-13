@@ -26,7 +26,7 @@
     aspect-ratio: 1 / 1;
     height: 60px;
     min-width: height;
-    border: 2px solid rgb(67, 67, 67);
+    border: 2px solid rgb(211, 214, 218);
 }
 .Wordle-Letter-Input, .Wordle-Letter-Output {
     font-weight: bold;
@@ -44,12 +44,15 @@
 }
 .Gray {
     background-color: rgb(120,124,126);
+    border: 2px solid rgb(120,124,126);
 }
 .Yellow {
     background-color: rgb(201, 180, 88);
+    border: 2px solid rgb(201, 180, 88);
 }
 .Green {
     background-color: rgb(106, 170, 100);
+    border: 2px solid rgb(106, 170, 100);
 }
 .Button {
     /*  Sebastian Lague's Design - https://seblague.github.io/ideagenerator/

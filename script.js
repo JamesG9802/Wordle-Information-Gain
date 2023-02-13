@@ -387,13 +387,16 @@ function ChooseAnswer() {
         });
         console.log(wordList.length);
     }
-    else if(word.toUpperCase() == guessWord.toUpperCase())
-    {
-        found = true;
-        console.log("found");
+    else{
+        if(word.toUpperCase() == guessWord.toUpperCase())
+        {
+            found = true;
+            console.log("found");
+        }
+        else
+            console.log("couldn't find word");
+        ShareResults();
     }
-    else
-        console.log("couldn't find word");
 }
 function GenerateOutcomeString(originalWord, actualWord)  {
     originalWord = originalWord.toUpperCase();
@@ -447,4 +450,26 @@ function GenerateOutcomeString(originalWord, actualWord)  {
     }
     return outcomeString;
 }
-
+function ShareResults()
+{
+    var shareString = "Wordle Solver ";
+    if(found)
+        shareString += outputLetterRow + "/6\n";
+    else
+        shareString += "x/6\n";
+    //  Generating string from each word
+    for(var i = 0; i < outputLetterRow; i++)
+    {
+        for(var j = 0; j < 5; j++)
+        {
+            if(outputLetters[i * 5 + j].parentElement.classList.contains("Gray"))
+                shareString+="🟩";
+            else if(outputLetters[i * 5 + j].parentElement.classList.contains("Yellow"))
+                shareString+="🟨";
+            else
+                shareString+="⬜";
+        }
+        shareString+="\n";
+    }
+    navigator.clipboard.writeText(shareString);
+}

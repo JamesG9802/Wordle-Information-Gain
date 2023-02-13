@@ -11,6 +11,9 @@
                     Enter a word that the computer will try to solve using the keyboard. 
                     Press Enter or the button to run the solver.
                 </p>
+                <div id="Share-Button">
+                    <button class="Button" onclick="ShareResults()">Share</button>
+                </div>
             </div>
             <div style="align-items: center;"class="Wordle-Board">
                 <p id="Error-Display"></p>
