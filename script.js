@@ -463,11 +463,11 @@ function ShareResults()
         for(var j = 0; j < 5; j++)
         {
             if(outputLetters[i * 5 + j].parentElement.classList.contains("Gray"))
-                shareString+="🟩";
+                shareString+="⬜";
             else if(outputLetters[i * 5 + j].parentElement.classList.contains("Yellow"))
                 shareString+="🟨";
             else
-                shareString+="⬜";
+                shareString+="🟩";
         }
         shareString+="\n";
     }
