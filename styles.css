@@ -101,3 +101,7 @@
     height: 30px;
     background-color: rgb(106, 170, 100);
 }
+
+#Share-Button {
+    display: none;
+}
