@@ -332,7 +332,7 @@ function ChooseAnswer() {
                 var matchingYellowFlag = false;
 
                 for(var spot = 0; spot < outcomeString.length; spot++)
-                    if(outcomeString[spot] == "1" && outcomeString[spot] == word[grayLetter])   //  yellow letter match gray
+                    if(outcomeString[spot] == "1" && word[spot] == word[grayLetter])   //  yellow letter match gray
                     {
                         matchingYellowFlag = true;
                         break;
@@ -342,7 +342,7 @@ function ChooseAnswer() {
                 //  all that can be done is that gray cant be the letter.
                 {
                     guessRestrictions[grayLetter][1] += word[grayLetter];
-                    break;
+                    continue;
                 }
                 for(var spot = 0; spot < outcomeString.length; spot++)  // no yellow letter match
                 {
